@@ -1,6 +1,6 @@
 module technical-test-fleetify/backend
 
-go 1.26.1
+go 1.23
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
