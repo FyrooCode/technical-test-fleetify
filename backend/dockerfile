@@ -1,22 +1,16 @@
-# Stage 1: Builder
 FROM golang:alpine AS builder
-# Pasang git & build-base kalau ada dependency CGO
 RUN apk add --no-cache git build-base
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-# Compile binary dengan static linking agar tidak error di Alpine
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# Stage 2: Runner (Lightweight)
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
-# Ambil binary dari builder
 COPY --from=builder /app/main .
-# JANGAN LUPA: Jika ada folder seeder/config, copy juga di sini
-# COPY --from=builder /app/internal/database/seeders ./internal/database/seeders
+
 
 EXPOSE 8080
 CMD ["./main"]

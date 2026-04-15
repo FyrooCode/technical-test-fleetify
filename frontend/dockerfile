@@ -1,26 +1,19 @@
-# 1. Install dependencies
 FROM node:18-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
-# 2. Builder
 FROM node:18-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Kita jalankan build untuk memastikan tidak ada error TS/Lint
 RUN npm run build
 
-# 3. Runner untuk Tahap Development
 FROM node:18-alpine AS runner
 WORKDIR /app
-# Set ke development agar Hot Reload Next.js aktif [cite: 31]
 ENV NODE_ENV development 
 
-# Copy semua file (termasuk node_modules) agar command dev jalan
 COPY --from=builder /app ./
 
 EXPOSE 3000
-# Command WAJIB untuk development agar sinkron dengan Volumes di compose
 CMD ["npm", "run", "dev"]
