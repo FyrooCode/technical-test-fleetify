@@ -1,17 +1,26 @@
-# Frontend
+# Dependencies
+node_modules/
 frontend/node_modules/
-frontend/.next/
-frontend/.env
-frontend/out/
 
-# Backend
-backend/.env
+# Next.js & Build
+.next/
+frontend/.next/
+frontend/out/
+build/
 backend/main
 backend/backend
 
-# Docker
+# Env Files (Sangat Penting)
 .env
+.env*.local
+.env.*
+backend/.env
+frontend/.env
 
-# OS & IDE
+# Debug & Misc
+npm-debug.log*
+yarn-debug.log*
 .DS_Store
+*.tsbuildinfo
+.vercel/
 .vscode/
