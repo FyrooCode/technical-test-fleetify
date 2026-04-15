@@ -1,0 +1,17 @@
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/.env
+frontend/out/
+
+# Backend
+backend/.env
+backend/main
+backend/backend
+
+# Docker
+.env
+
+# OS & IDE
+.DS_Store
+.vscode/
