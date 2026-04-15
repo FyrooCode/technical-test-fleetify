@@ -8,7 +8,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user"]
+      test: ["CMD-SHELL", "pg_isready -U user -d fleetify_db"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -29,10 +29,15 @@ services:
         condition: service_healthy
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: dockerfile
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8080
+      NEXT_PUBLIC_API_URL: http://localhost:8080/api
+    # Volume hanya untuk src agar hot-reload jalan tanpa menimpa root config
+    volumes:
+      - ./frontend/src:/app/src
     depends_on:
       - backend
