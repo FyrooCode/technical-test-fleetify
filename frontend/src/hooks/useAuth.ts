@@ -35,23 +35,20 @@ export const useAuth = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // Endpoint sesuai spec Bagian 2 Poin 1 [cite: 47, 48]
       const response = await api.post('/login', { username, password });
       const { token } = response.data.data;
 
-      // Simpan JWT di cookie sesuai spec [cite: 21]
       Cookies.set('token', token, { expires: 1 });
 
-      // Decode token untuk mendapatkan role [cite: 37]
       const decoded = jwtDecode<JWTPayload>(token);
       const userData: User = {
         id: decoded.id,
         username: decoded.username,
-        role: decoded.role, // Admin atau Kerani [cite: 37, 48]
+        role: decoded.role,
       };
 
       setAuth(userData);
-      router.push('/'); // Redirect to home
+      router.push('/');
     } catch (err) {
       const apiError = err as ApiError;
       setError(apiError.response?.data?.error?.message || 'Login failed. Please try again.');
