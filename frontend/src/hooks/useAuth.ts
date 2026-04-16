@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
-import api from '@/lib/axios';
+import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/useAuthStore';
 import { User } from '@/types';
 
@@ -35,8 +35,8 @@ export const useAuth = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api.post('/login', { username, password });
-      const { token } = response.data.data;
+      const response = await authService.login({ username, password });
+      const { token } = response.data;
 
       Cookies.set('token', token, { expires: 1 });
 

@@ -34,4 +34,3 @@ export default function Home() {
     </MainLayout>
   );
 }
-import { BarChart3 } from 'lucide-react';
