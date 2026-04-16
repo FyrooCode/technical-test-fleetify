@@ -1,6 +1,7 @@
 package invoice
 
 import (
+	"technical-test-fleetify/backend/internal/item"
 	"time"
 )
 
@@ -18,10 +19,11 @@ type Invoice struct {
 }
 
 type InvoiceDetail struct {
-	ID        uint  `gorm:"primaryKey" json:"id"`
-	InvoiceID uint  `gorm:"not null" json:"invoice_id"`
-	ItemID    uint  `gorm:"not null" json:"item_id"`
-	Quantity  int   `gorm:"not null" json:"quantity"`
-	Price     int64 `gorm:"not null" json:"price"`
-	Subtotal  int64 `gorm:"not null" json:"subtotal"`
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	InvoiceID uint      `gorm:"not null" json:"invoice_id"`
+	ItemID    uint      `gorm:"not null" json:"item_id"`
+	Item      item.Item `gorm:"foreignKey:ItemID" json:"item"`
+	Quantity  int       `gorm:"not null" json:"quantity"`
+	Price     int64     `gorm:"not null" json:"price"`
+	Subtotal  int64     `gorm:"not null" json:"subtotal"`
 }

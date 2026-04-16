@@ -1,7 +1,10 @@
 package invoice
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"technical-test-fleetify/backend/internal/database"
 	"technical-test-fleetify/backend/internal/item"
 	"time"
@@ -16,6 +19,16 @@ type CreateInvoiceResponse struct {
 	Meta   struct {
 		Timestamp time.Time `json:"timestamp"`
 	} `json:"meta"`
+}
+
+func sendWebhook(data interface{}) {
+	webhookURL := "https://webhook.site/your-unique-id"
+	jsonData, _ := json.Marshal(data)
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Post(webhookURL, "application/json", bytes.NewBuffer(jsonData))
+	if err == nil {
+		defer resp.Body.Close()
+	}
 }
 
 func CreateInvoiceHandler(c *fiber.Ctx) error {
@@ -39,7 +52,6 @@ func CreateInvoiceHandler(c *fiber.Ctx) error {
 			"error": fiber.Map{
 				"code":    "INVALID_REQUEST",
 				"message": "Invalid request format",
-				"details": "Check JSON structure: sender_name, sender_address, receiver_name, receiver_address, details[]",
 			},
 		})
 	}
@@ -49,7 +61,7 @@ func CreateInvoiceHandler(c *fiber.Ctx) error {
 			"status": "error",
 			"error": fiber.Map{
 				"code":    "MISSING_FIELD",
-				"message": "details array is required (at least 1 item)",
+				"message": "details array required (min 1 item)",
 			},
 		})
 	}
@@ -66,10 +78,8 @@ func CreateInvoiceHandler(c *fiber.Ctx) error {
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
 		now := time.Now()
 		datePrefix := fmt.Sprintf("INV/%04d/%02d", now.Year(), now.Month())
-
 		var count int64
 		tx.Model(&Invoice{}).Where("invoice_number LIKE ?", datePrefix+"%").Count(&count)
-
 		invoiceNumber := fmt.Sprintf("%s/%03d", datePrefix, count+1)
 
 		var totalAmount int64
@@ -82,7 +92,7 @@ func CreateInvoiceHandler(c *fiber.Ctx) error {
 			}
 
 			if d.Quantity <= 0 {
-				return fiber.NewError(400, "Quantity must be greater than 0")
+				return fiber.NewError(400, "Quantity must be > 0")
 			}
 
 			subtotal := masterItem.Price * int64(d.Quantity)
@@ -112,8 +122,7 @@ func CreateInvoiceHandler(c *fiber.Ctx) error {
 			return err
 		}
 
-		createdInvoice = newInvoice
-		return nil
+		return tx.Preload("Details.Item").First(&createdInvoice, newInvoice.ID).Error
 	})
 
 	if err != nil {
@@ -134,6 +143,8 @@ func CreateInvoiceHandler(c *fiber.Ctx) error {
 			},
 		})
 	}
+
+	go sendWebhook(createdInvoice)
 
 	resp := CreateInvoiceResponse{
 		Status: "success",

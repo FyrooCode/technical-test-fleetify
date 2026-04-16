@@ -10,8 +10,8 @@ export default function WizardPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto py-8">
-        <div className="flex items-center justify-between mb-12 max-w-2xl mx-auto">
+      <div className="max-w-6xl mx-auto py-8 print:py-0">
+        <div className="stepper-container flex items-center justify-between mb-12 max-w-2xl mx-auto print:hidden">
           {[1, 2, 3].map((s) => (
             <React.Fragment key={s}>
               <div className="flex flex-col items-center relative z-10">

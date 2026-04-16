@@ -11,8 +11,8 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
     <div className="flex">
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
-      <div className="sm:ml-64 w-full">
-        <div className="p-4 mt-12 sm:mt-0">
+      <div className="sm:ml-64 w-full print:ml-0 print:w-full">
+        <div className="p-4 mt-12 sm:mt-0 print:mt-0 print:p-0">
           {children}
         </div>
       </div>

@@ -32,13 +32,13 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 sm:hidden p-2 bg-white border rounded-md"
+        className="fixed top-4 left-4 z-50 sm:hidden p-2 bg-white border rounded-md print:hidden"
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen bg-white border-r transition-transform duration-300 ${
+        className={`fixed top-0 left-0 z-40 w-64 h-screen bg-white border-r transition-transform duration-300 print:hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'
         }`}
       >
