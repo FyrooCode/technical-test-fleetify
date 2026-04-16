@@ -1,4 +1,4 @@
-# Fleetify Technical Test - Multi-Step Invoice Generator
+# Fleetify Technical Test - Invoice Generator
 
 
 
@@ -25,16 +25,6 @@ This will:
 |------|----------|----------|
 | Admin | admin | admin123 |
 | Kerani | kerani | kerani123 |
-
-## Webhook Testing (Bonus Feature)
-
-Webhook is configured to send invoice data to webhook after successful creation.
-
-Default webhook URL: https://sunny-dog-83.webhook.cool
-
-To use different webhook URL:
-1. Update `WEBHOOK_URL` in docker-compose.yml
-2. Restart backend: `docker-compose restart backend`
 
 ## Testing with Postman
 

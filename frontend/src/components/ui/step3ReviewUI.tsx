@@ -33,7 +33,6 @@ export const Step3ReviewUI: React.FC<Step3ReviewUIProps> = ({
   onPrint,
   onFinish,
 }) => {
-  // Success state - show success message
   if (status === 'success' && createdInvoice) {
     return (
       <div className="max-w-2xl mx-auto my-10">
@@ -57,7 +56,6 @@ export const Step3ReviewUI: React.FC<Step3ReviewUIProps> = ({
     );
   }
 
-  // Review form state - show review and submit form
   return (
     <div className="bg-white p-8 rounded-lg border border-gray-200">
       <div className="flex items-center justify-between mb-8">
