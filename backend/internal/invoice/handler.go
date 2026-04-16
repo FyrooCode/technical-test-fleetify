@@ -154,3 +154,38 @@ func CreateInvoiceHandler(c *fiber.Ctx) error {
 
 	return c.Status(201).JSON(resp)
 }
+
+func GetInvoicesHandler(c *fiber.Ctx) error {
+	var invoices []Invoice
+
+	username := c.Locals("username").(string)
+	var userID uint
+	if username == "admin" {
+		userID = 1
+	} else {
+		userID = 2
+	}
+
+	query := database.DB
+	if username != "admin" {
+		query = query.Where("created_by = ?", userID)
+	}
+
+	if err := query.Preload("Details.Item").Order("created_at DESC").Find(&invoices).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"status": "error",
+			"error": fiber.Map{
+				"code":    "DATABASE_ERROR",
+				"message": "Failed to fetch invoices",
+			},
+		})
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status": "success",
+		"data":   invoices,
+		"meta": fiber.Map{
+			"timestamp": time.Now(),
+		},
+	})
+}

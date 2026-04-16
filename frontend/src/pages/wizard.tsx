@@ -15,7 +15,7 @@ export default function WizardPage() {
           {[1, 2, 3].map((s) => (
             <React.Fragment key={s}>
               <div className="flex flex-col items-center relative z-10">
-                <div className={`h-12 w-12 rounded-2xl flex items-center justify-center font-bold transition-all duration-500 ${step >= s ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'bg-gray-100 text-gray-400'}`}>
+                <div className={`h-12 w-12 rounded-2xl flex items-center justify-center font-bold transition-all duration-500 ${step >= s ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
                   {s}
                 </div>
                 <span className={`absolute -bottom-7 whitespace-nowrap text-xs font-black uppercase tracking-tighter ${step >= s ? 'text-blue-600' : 'text-gray-300'}`}>

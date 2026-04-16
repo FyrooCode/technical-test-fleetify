@@ -97,14 +97,18 @@ export const useStep3Review = () => {
       document.title = `${createdInvoice.invoice_number}`;
     }
     
-    // Delay print to ensure title is updated
-    setTimeout(() => {
+    // Call print directly without wrapper to avoid performance violations
+    // Use Promise to defer print call
+    Promise.resolve().then(() => {
       window.print();
-      // Restore original title after print
-      setTimeout(() => {
-        document.title = originalTitle;
-      }, 100);
-    }, 100);
+    });
+    
+    // Restore original title after print dialog closes
+    const printHandler = () => {
+      document.title = originalTitle;
+      window.removeEventListener('afterprint', printHandler);
+    };
+    window.addEventListener('afterprint', printHandler);
   };
 
   const handleFinish = () => {

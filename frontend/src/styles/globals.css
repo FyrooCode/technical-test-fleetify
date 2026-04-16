@@ -26,9 +26,42 @@ body {
   }
 }
 
-/* Hide elements during print */
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
 @media print {
   .no-print {
     display: none !important;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+    width: 100%;
+  }
+  
+  aside,
+  nav,
+  .sidebar,
+  header {
+    display: none !important;
+  }
+  
+  main,
+  .print-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100%;
+  }
+  
+  .print-only {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    page-break-after: avoid;
   }
 }

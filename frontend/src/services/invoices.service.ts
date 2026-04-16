@@ -52,4 +52,12 @@ export const invoicesService = {
     const response = await api.post<CreateInvoiceResponse>('/invoices', payload);
     return response.data.data;
   },
+
+  /**
+   * Get all invoices
+   */
+  getAll: async (): Promise<Invoice[]> => {
+    const response = await api.get<{ status: string; data: Invoice[] }>('/invoices');
+    return response.data.data;
+  },
 };

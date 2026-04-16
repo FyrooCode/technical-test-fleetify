@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
-import { BarChart3, FileText, LogOut, Menu, X } from 'lucide-react';
+import { BarChart3, FileText, LogOut, Menu, X, Package, History } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useInvoiceStore } from '@/store/useInvoiceStore';
 
@@ -26,6 +26,8 @@ export const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   const navItems = [
     { label: 'Dashboard', icon: BarChart3, href: '/' },
     { label: 'Create Invoice', icon: FileText, href: '/wizard' },
+    { label: 'Master Items', icon: Package, href: '/master-items' },
+    { label: 'Invoice History', icon: History, href: '/invoices' },
   ];
 
   return (

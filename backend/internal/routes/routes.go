@@ -20,4 +20,5 @@ func SetupRoutes(app *fiber.App) {
 	//Protected routes
 	protected := api.Group("/", middleware.JWTProtected)
 	protected.Post("/invoices", invoice.CreateInvoiceHandler)
+	protected.Get("/invoices", invoice.GetInvoicesHandler)
 }

@@ -37,7 +37,7 @@ export const Step3ReviewUI: React.FC<Step3ReviewUIProps> = ({
   if (status === 'success' && createdInvoice) {
     return (
       <div className="max-w-2xl mx-auto my-10">
-        <div className="flex flex-col p-10 bg-white shadow-lg rounded-xl border border-gray-100 items-center text-center">
+        <div className="flex flex-col p-10 bg-white rounded-xl border border-gray-100 items-center text-center">
           <div className="flex justify-center mb-6 text-green-500 bg-green-50 p-4 rounded-full">
             <CheckCircle2 size={64} />
           </div>
@@ -45,10 +45,10 @@ export const Step3ReviewUI: React.FC<Step3ReviewUIProps> = ({
           <p className="text-gray-500 mb-8">Invoice <span className="font-bold text-gray-800">{createdInvoice?.invoice_number}</span> telah aman tersimpan di database.</p>
           
           <div className="flex gap-4 w-full justify-center">
-            <button onClick={onPrint} className="flex items-center justify-center px-6 py-3 w-48 bg-gray-900 text-white font-bold rounded-lg hover:bg-gray-800 transition-all shadow-md">
+            <button onClick={onPrint} className="flex items-center justify-center px-6 py-3 w-48 bg-gray-900 text-white font-bold rounded-lg hover:bg-gray-800 transition-all">
               <Printer size={18} className="mr-2" /> Cetak Invoice
             </button>
-            <button onClick={onFinish} className="flex items-center justify-center px-6 py-3 w-48 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all shadow-md">
+            <button onClick={onFinish} className="flex items-center justify-center px-6 py-3 w-48 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all">
               <Home size={18} className="mr-2" /> Selesai
             </button>
           </div>
@@ -59,7 +59,7 @@ export const Step3ReviewUI: React.FC<Step3ReviewUIProps> = ({
 
   // Review form state - show review and submit form
   return (
-    <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+    <div className="bg-white p-8 rounded-lg border border-gray-200">
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-xl font-bold text-gray-800 flex items-center">
           <FileText className="mr-2 text-blue-600" size={24} /> Review Invoice
