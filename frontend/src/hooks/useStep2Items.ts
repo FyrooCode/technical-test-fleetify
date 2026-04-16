@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
+import { useQuery } from '@tanstack/react-query';
 import { useInvoiceStore } from '@/store/useInvoiceStore';
 import { itemsService } from '@/services/items.service';
+import { Item } from '@/types';
 
 export const useStep2Items = () => {
   const { details, setDetails, setStep } = useInvoiceStore();
-  const [searchResults, setSearchResults] = useState<{ [key: number]: any[] }>({});
-  const [loadingMap, setLoadingMap] = useState<{ [key: number]: boolean }>({});
+  const [searchQueries, setSearchQueries] = useState<{ [key: number]: string }>({});
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   
   const abortControllerRef = useRef<{ [key: number]: AbortController }>({});
@@ -13,6 +15,7 @@ export const useStep2Items = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const timers = debounceTimerRef.current;
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setActiveDropdown(null);
@@ -21,7 +24,7 @@ export const useStep2Items = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      Object.values(debounceTimerRef.current).forEach(clearTimeout);
+      Object.values(timers).forEach(clearTimeout);
     };
   }, []);
 
@@ -31,32 +34,53 @@ export const useStep2Items = () => {
 
   const removeRow = (index: number) => {
     setDetails(details.filter((_, i) => i !== index));
+    // Clean up query state for removed row
+    setSearchQueries(prev => {
+      const updated = { ...prev };
+      delete updated[index];
+      return updated;
+    });
   };
 
-  const fetchItems = async (index: number, query: string) => {
-    if (abortControllerRef.current[index]) {
-      abortControllerRef.current[index].abort();
-    }
-
-    const controller = new AbortController();
-    abortControllerRef.current[index] = controller;
-    setLoadingMap(prev => ({ ...prev, [index]: true }));
-
-    try {
-      const data = await itemsService.searchByCode(query, controller.signal);
+  const { data: searchResults = {} } = useQuery({
+    queryKey: ['items', searchQueries],
+    queryFn: async () => {
+      const results: { [key: number]: Item[] } = {};
       
-      setSearchResults(prev => ({ 
-        ...prev, 
-        [index]: data.slice(0, 5)
-      }));
-    } catch (err: any) {
-      if (err.name !== 'CanceledError') console.error(err);
-    } finally {
-      setLoadingMap(prev => ({ ...prev, [index]: false }));
-    }
-  };
+      // Run all active queries in parallel (including empty queries for fetch-all)
+      const promises = Object.entries(searchQueries)
+        .map(async ([index, query]) => {
+          try {
+            const idx = parseInt(index, 10);
+            if (abortControllerRef.current[idx]) {
+              abortControllerRef.current[idx].abort();
+            }
+            const controller = new AbortController();
+            abortControllerRef.current[idx] = controller;
+            
+            // If query is empty, fetch first 10 items; otherwise search
+            const data = query.trim() === '' 
+              ? await itemsService.getAll(controller.signal).then((items: Item[]) => items.slice(0, 10))
+              : await itemsService.searchByCode(query, controller.signal);
+            results[idx] = data.slice(0, 5);
+          } catch (err) {
+            const error = err as { name: string };
+            if (error.name !== 'CanceledError') {
+              console.error(err);
+              toast.error('Failed to search items. Please try again.');
+            }
+            results[parseInt(index, 10)] = [];
+          }
+        });
 
-  const handleInputChange = (index: number, value: string) => {
+      await Promise.all(promises);
+      return results;
+    },
+    enabled: Object.keys(searchQueries).length > 0,
+    staleTime: 0,
+  });
+
+  const handleInputChange = useCallback((index: number, value: string) => {
     const newDetails = [...details];
     newDetails[index].code = value;
     
@@ -68,17 +92,21 @@ export const useStep2Items = () => {
     }
     
     setDetails(newDetails);
-
+    
+    // Debounce search query update
     if (debounceTimerRef.current[index]) {
       clearTimeout(debounceTimerRef.current[index]);
     }
 
     debounceTimerRef.current[index] = setTimeout(() => {
-      fetchItems(index, value);
-    }, 500); 
-  };
+      setSearchQueries(prev => ({
+        ...prev,
+        [index]: value,
+      }));
+    }, 500);
+  }, [details, setDetails]);
 
-  const selectItem = (index: number, item: any) => {
+  const selectItem = (index: number, item: Item) => {
     const newDetails = [...details];
     newDetails[index] = {
       ...newDetails[index],
@@ -90,7 +118,6 @@ export const useStep2Items = () => {
     };
     setDetails(newDetails);
     setActiveDropdown(null);
-    setSearchResults(prev => ({ ...prev, [index]: [] }));
   };
 
   const handleQuantityChange = (index: number, quantity: number) => {
@@ -99,6 +126,19 @@ export const useStep2Items = () => {
     newDetails[index].quantity = q;
     newDetails[index].subtotal = q * newDetails[index].price;
     setDetails(newDetails);
+  };
+
+  // Determine loading state for each row
+  const loadingMap: { [key: number]: boolean } = {};
+  Object.keys(searchQueries).forEach((index) => {
+    loadingMap[parseInt(index, 10)] = false; // useQuery handles loading internally
+  });
+
+  const fetchItems = (index: number, query: string) => {
+    setSearchQueries(prev => ({
+      ...prev,
+      [index]: query,
+    }));
   };
 
   return {

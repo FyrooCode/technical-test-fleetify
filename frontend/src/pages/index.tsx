@@ -4,6 +4,10 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { MainLayout } from '@/components/layout/mainLayout';
 
+interface JWTPayload {
+  exp: number;
+}
+
 export default function Home() {
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
@@ -14,7 +18,7 @@ export default function Home() {
       router.push('/login');
     } else {
       try {
-        const decoded: any = jwtDecode(token);
+        const decoded = jwtDecode<JWTPayload>(token);
         if (decoded.exp * 1000 < Date.now()) {
           Cookies.remove('token');
           router.push('/login');

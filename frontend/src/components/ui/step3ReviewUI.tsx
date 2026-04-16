@@ -1,16 +1,17 @@
 import React from 'react';
 import { FileText, AlertCircle, ArrowLeft, Send, Loader2, CheckCircle2, Printer, Home } from 'lucide-react';
+import { User, InvoiceDetailDisplay, Invoice } from '@/types';
 
 interface Step3ReviewUIProps {
   sender_name: string;
   sender_address: string;
   receiver_name: string;
   receiver_address: string;
-  details: any[];
-  user: any;
+  details: InvoiceDetailDisplay[];
+  user: User | null;
   status: 'idle' | 'success' | 'error';
   isSubmitting: boolean;
-  createdInvoice: any;
+  createdInvoice: Invoice | null;
   onSubmit: () => void;
   onBack: () => void;
   onPrint: () => void;

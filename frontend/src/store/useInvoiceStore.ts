@@ -17,9 +17,11 @@ interface InvoiceState {
   receiver_name: string;
   receiver_address: string;
   details: InvoiceDetail[];
+  invoiceCreatedAt: number | null; // Track when invoice was created
   setStep: (step: number) => void;
   setStep1: (data: Partial<InvoiceState>) => void;
   setDetails: (details: InvoiceDetail[]) => void;
+  setInvoiceCreatedAt: (timestamp: number | null) => void;
   resetInvoice: () => void;
 }
 
@@ -32,14 +34,17 @@ export const useInvoiceStore = create<InvoiceState>()(
       receiver_name: '',
       receiver_address: '',
       details: [],
+      invoiceCreatedAt: null,
       setStep: (step) => set({ step }),
       setStep1: (data) => set((state) => ({ ...state, ...data })),
       setDetails: (details) => set({ details }),
+      setInvoiceCreatedAt: (timestamp) => set({ invoiceCreatedAt: timestamp }),
       resetInvoice: () => set({ 
         step: 1, 
         sender_name: '', sender_address: '', 
         receiver_name: '', receiver_address: '',
-        details: [] 
+        details: [],
+        invoiceCreatedAt: null,
       }),
     }),
     { name: 'invoice-storage' }

@@ -36,7 +36,6 @@ services:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080/api
-    # Volume hanya untuk src agar hot-reload jalan tanpa menimpa root config
     volumes:
       - ./frontend/src:/app/src
     depends_on:

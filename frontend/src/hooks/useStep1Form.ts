@@ -17,7 +17,7 @@ export const useStep1Form = () => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setStep1({ [field]: value } as any);
+    setStep1({ [field]: value } as Record<string, string>);
   };
 
   return {

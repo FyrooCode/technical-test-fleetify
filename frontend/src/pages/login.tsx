@@ -6,6 +6,10 @@ import { LoginForm } from '@/components/ui/loginForm';
 import { AuthLayout } from '@/components/layout/authLayout';
 import { useAuth } from '@/hooks/useAuth';
 
+interface JWTPayload {
+  exp: number;
+}
+
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -16,15 +20,17 @@ export default function LoginPage() {
     const token = Cookies.get('token');
     if (token) {
       try {
-        const decoded: any = jwtDecode(token);
+        const decoded = jwtDecode<JWTPayload>(token);
         if (decoded.exp * 1000 > Date.now()) {
           router.push('/');
           return;
         }
-      } catch {}
+      } catch {
+        // Token decode error, continue to login
+      }
       Cookies.remove('token');
     }
-  }, []);
+  }, [router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

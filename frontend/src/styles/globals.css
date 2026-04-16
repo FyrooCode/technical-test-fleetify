@@ -25,3 +25,10 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Hide elements during print */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

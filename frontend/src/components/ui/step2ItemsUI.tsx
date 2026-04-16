@@ -1,9 +1,10 @@
 import React from 'react';
 import { Trash2, Plus, Loader2, ArrowLeft } from 'lucide-react';
+import { InvoiceDetailDisplay, Item } from '@/types';
 
 interface Step2ItemsUIProps {
-  details: any[];
-  searchResults: { [key: number]: any[] };
+  details: InvoiceDetailDisplay[];
+  searchResults: { [key: number]: Item[] };
   loadingMap: { [key: number]: boolean };
   activeDropdown: number | null;
   containerRef: React.RefObject<HTMLDivElement>;
@@ -11,9 +12,9 @@ interface Step2ItemsUIProps {
   onRemoveRow: (index: number) => void;
   onInputChange: (index: number, value: string) => void;
   onQuantityChange: (index: number, quantity: number) => void;
-  onSelectItem: (index: number, item: any) => void;
+  onSelectItem: (index: number, item: Item) => void;
   onSetActiveDropdown: (index: number | null) => void;
-  onFetchItems: (index: number, query: string) => void;
+  onFetchItems?: (index: number, query: string) => void;
   onSetStep: (step: number) => void;
 }
 
@@ -67,7 +68,7 @@ export const Step2ItemsUI: React.FC<Step2ItemsUIProps> = ({
                       value={row.code}
                       onFocus={() => {
                         onSetActiveDropdown(index);
-                        onFetchItems(index, row.code || '');
+                        onFetchItems?.(index, row.code || '');
                       }}
                       onChange={(e) => onInputChange(index, e.target.value)}
                       className={inputClass}

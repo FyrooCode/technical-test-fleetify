@@ -1,7 +1,8 @@
 import React from 'react';
+import { Invoice, InvoiceDetailResponse } from '@/types';
 
 interface Step3PrintPreviewProps {
-  createdInvoice: any;
+  createdInvoice: Invoice;
 }
 
 export const Step3PrintPreview: React.FC<Step3PrintPreviewProps> = ({ createdInvoice }) => {
@@ -17,7 +18,7 @@ export const Step3PrintPreview: React.FC<Step3PrintPreviewProps> = ({ createdInv
             <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: '0 0 4px 0', color: '#1f2937' }}>INVOICE</h2>
             <p style={{ margin: 0, fontSize: '14px', fontWeight: 'bold', color: '#4b5563' }}>{createdInvoice.invoice_number}</p>
             <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-              Tanggal: {new Date(createdInvoice.created_at).toLocaleDateString('id-ID')}
+              Tanggal: {new Date(createdInvoice.created_at).toLocaleDateString('id-ID')} Jam: {new Date(createdInvoice.created_at).toLocaleTimeString('id-ID')}
             </p>
           </div>
         </div>
@@ -45,7 +46,7 @@ export const Step3PrintPreview: React.FC<Step3PrintPreviewProps> = ({ createdInv
             </tr>
           </thead>
           <tbody>
-            {createdInvoice.details.map((item: any, idx: number) => (
+            {createdInvoice.details.map((item: InvoiceDetailResponse, idx: number) => (
               <tr key={idx} style={{ borderBottom: '1px solid #e5e7eb' }}>
                 <td style={{ padding: '12px 0', fontSize: '14px' }}>{item.item?.name || 'Item'}</td>
                 <td style={{ textAlign: 'center', padding: '12px 0', fontSize: '14px' }}>{item.quantity}</td>
