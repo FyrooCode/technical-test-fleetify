@@ -7,7 +7,7 @@ import { invoicesService } from '@/services/invoices.service';
 import { useRouter } from 'next/router';
 import type { Invoice } from '@/types';
 
-const INVOICE_STALE_TIME = 30000; // 30 seconds - if invoice is older than this, reset on page load
+const INVOICE_STALE_TIME = 30000;
 
 export const useStep3Review = () => {
   const router = useRouter();
@@ -16,21 +16,20 @@ export const useStep3Review = () => {
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [createdInvoice, setCreatedInvoice] = useState<Invoice | null>(null);
 
-  // Auto-reset wizard if invoice is stale (from previous session)
+ 
   useEffect(() => {
     if (invoiceCreatedAt) {
       const timeSinceCreation = Date.now() - invoiceCreatedAt;
       
       if (timeSinceCreation > INVOICE_STALE_TIME) {
-        // Invoice is stale, reset to step 1
+
         resetInvoice();
         setStatus('idle');
         setCreatedInvoice(null);
         setStep(1);
       } else {
-        // Invoice is fresh, show success page
+
         setStatus('success');
-        // Load the persisted createdInvoice from localStorage if available
         const stored = localStorage.getItem('last-created-invoice');
         if (stored) {
           try {
@@ -77,7 +76,6 @@ export const useStep3Review = () => {
       setCreatedInvoice(data);
       setStatus('success');
       setInvoiceCreatedAt(Date.now());
-      // Store invoice in localStorage for recovery on refresh
       localStorage.setItem('last-created-invoice', JSON.stringify(data));
       toast.success(`Invoice ${data.invoice_number} created successfully!`);
     },
@@ -91,19 +89,15 @@ export const useStep3Review = () => {
   });
 
   const handlePrint = () => {
-    // Set document title to invoice number for PDF filename
     const originalTitle = document.title;
     if (createdInvoice?.invoice_number) {
       document.title = `${createdInvoice.invoice_number}`;
     }
     
-    // Call print directly without wrapper to avoid performance violations
-    // Use Promise to defer print call
     Promise.resolve().then(() => {
       window.print();
     });
     
-    // Restore original title after print dialog closes
     const printHandler = () => {
       document.title = originalTitle;
       window.removeEventListener('afterprint', printHandler);
@@ -112,7 +106,6 @@ export const useStep3Review = () => {
   };
 
   const handleFinish = () => {
-    // Clear stored invoice when finishing
     localStorage.removeItem('last-created-invoice');
     resetInvoice();
     router.push('/');

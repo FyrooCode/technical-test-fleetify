@@ -34,7 +34,6 @@ export const useStep2Items = () => {
 
   const removeRow = (index: number) => {
     setDetails(details.filter((_, i) => i !== index));
-    // Clean up query state for removed row
     setSearchQueries(prev => {
       const updated = { ...prev };
       delete updated[index];
@@ -47,7 +46,6 @@ export const useStep2Items = () => {
     queryFn: async () => {
       const results: { [key: number]: Item[] } = {};
       
-      // Run all active queries in parallel (including empty queries for fetch-all)
       const promises = Object.entries(searchQueries)
         .map(async ([index, query]) => {
           try {
@@ -58,7 +56,6 @@ export const useStep2Items = () => {
             const controller = new AbortController();
             abortControllerRef.current[idx] = controller;
             
-            // If query is empty, fetch first 10 items; otherwise search
             const data = query.trim() === '' 
               ? await itemsService.getAll(controller.signal).then((items: Item[]) => items.slice(0, 10))
               : await itemsService.searchByCode(query, controller.signal);
@@ -93,7 +90,6 @@ export const useStep2Items = () => {
     
     setDetails(newDetails);
     
-    // Debounce search query update
     if (debounceTimerRef.current[index]) {
       clearTimeout(debounceTimerRef.current[index]);
     }
@@ -128,10 +124,9 @@ export const useStep2Items = () => {
     setDetails(newDetails);
   };
 
-  // Determine loading state for each row
   const loadingMap: { [key: number]: boolean } = {};
   Object.keys(searchQueries).forEach((index) => {
-    loadingMap[parseInt(index, 10)] = false; // useQuery handles loading internally
+    loadingMap[parseInt(index, 10)] = false;
   });
 
   const fetchItems = (index: number, query: string) => {

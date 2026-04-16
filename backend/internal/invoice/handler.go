@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"technical-test-fleetify/backend/internal/database"
 	"technical-test-fleetify/backend/internal/item"
 	"time"
@@ -22,12 +24,41 @@ type CreateInvoiceResponse struct {
 }
 
 func sendWebhook(data interface{}) {
-	webhookURL := "https://webhook.site/your-unique-id"
-	jsonData, _ := json.Marshal(data)
-	client := &http.Client{Timeout: 5 * time.Second}
+	webhookURL := os.Getenv("WEBHOOK_URL")
+
+	log.Printf("[Webhook DEBUG] Starting sendWebhook, URL: %s", webhookURL)
+
+	if webhookURL == "" {
+		log.Println("[Webhook] Skipped - WEBHOOK_URL not set")
+		return
+	}
+
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		log.Printf("[Webhook] Failed to marshal data: %v", err)
+		return
+	}
+
+	log.Printf("[Webhook DEBUG] Payload size: %d bytes", len(jsonData))
+
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	log.Printf("[Webhook DEBUG] Sending POST request to: %s", webhookURL)
 	resp, err := client.Post(webhookURL, "application/json", bytes.NewBuffer(jsonData))
-	if err == nil {
-		defer resp.Body.Close()
+	if err != nil {
+		log.Printf("[Webhook] ❌ FAILED - Error: %v", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	log.Printf("[Webhook DEBUG] Response Status: %d", resp.StatusCode)
+
+	if resp.StatusCode >= 400 {
+		log.Printf("[Webhook] ❌ Server error: %d", resp.StatusCode)
+	} else {
+		log.Printf("[Webhook] ✅ SUCCESS - Webhook sent to %s (Status: %d)", webhookURL, resp.StatusCode)
 	}
 }
 

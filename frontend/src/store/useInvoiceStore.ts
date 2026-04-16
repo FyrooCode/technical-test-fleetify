@@ -17,7 +17,7 @@ interface InvoiceState {
   receiver_name: string;
   receiver_address: string;
   details: InvoiceDetail[];
-  invoiceCreatedAt: number | null; // Track when invoice was created
+  invoiceCreatedAt: number | null;
   setStep: (step: number) => void;
   setStep1: (data: Partial<InvoiceState>) => void;
   setDetails: (details: InvoiceDetail[]) => void;

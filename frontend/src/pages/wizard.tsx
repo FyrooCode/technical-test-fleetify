@@ -2,7 +2,7 @@ import React from 'react';
 import { MainLayout } from '@/components/layout/mainLayout';
 import { Step1Form } from '@/components/wizard/step1Form';
 import { Step2Items } from '@/components/wizard/step2Items';
-import { Step3Review } from '@/components/wizard/step3Review'; // Import ini
+import { Step3Review } from '@/components/wizard/step3Review';
 import { useInvoiceStore } from '@/store/useInvoiceStore';
 
 export default function WizardPage() {

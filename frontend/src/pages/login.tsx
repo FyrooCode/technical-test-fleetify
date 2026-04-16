@@ -26,7 +26,7 @@ export default function LoginPage() {
           return;
         }
       } catch {
-        // Token decode error, continue to login
+        
       }
       Cookies.remove('token');
     }

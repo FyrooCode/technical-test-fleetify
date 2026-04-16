@@ -3,7 +3,7 @@ import api from '@/lib/axios';
 export interface InvoiceDetail {
   item_id: number;
   quantity: number;
-  price?: number; // Only for Admin role
+  price?: number;
 }
 
 export interface CreateInvoiceRequest {

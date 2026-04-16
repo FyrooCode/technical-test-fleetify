@@ -24,6 +24,7 @@ services:
       DB_USER: user
       DB_PASSWORD: password
       DB_NAME: fleetify_db
+      WEBHOOK_URL: https://sunny-dog-83.webhook.cool
     depends_on:
       db:
         condition: service_healthy
